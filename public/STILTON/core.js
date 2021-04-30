@@ -2,24 +2,93 @@ console.log(`loading STILTON...`)
 //init STILTON vars.
 const w = `1000px`
 const h = `700px`
+var script = ``;
+var characterList = [];
 
 class Character {
-    constructor(name,id,color) 
+    constructor() 
     {
-        this.name = name
-        this.id = id
-        this.color = color
+
     }
 }
+
+//load the script into memory.
+fetch(`./STILTON/script.txt`)
+    .then(async (r) => {
+        script = await r.text()
+    })
+//load the characters into memory.
+fetch(`./STILTON/characters.txt`)
+    .then(async (r2) => {
+        characters = await r2.text()
+        var rows = characters.split('\r\n')
+        //parse out all lines that start with a #
+
+        var done = false;
+        var i = 0;
+        while(!done)
+        {
+            if(rows[i][0]===`#` || !rows[i][0]) 
+            {
+                rows.splice(i,1)
+            }
+                else i++
+
+            if(i==rows.length) done = true
+        }
+
+        //step through the resulting text, line by line.
+        //initMode is a state in which STILTON is parsing lines as character properties. See below.
+        var initMode = false;
+        for(var i = 0; i<rows.length;i++)
+        {
+            
+            if(rows[i].match(/^\:{2}/))
+            {
+                console.log(`>>>>>>>>>>>>exting initMode.`)
+                initMode = false
+                characterList.push(chara)
+            }
+            //once initMode is entered, parse the following lines as properties.
+            if(initMode)
+            {
+                console.log(`parsing as initMode...`)
+                var prop = rows[i].match(/(\w+)\:/)[1]
+                var val = rows[i].match(/\w+\:\s+(.*)$/)[1]
+                console.log(`prop ${prop} val ${val}`)
+                chara[`${prop}`] = val
+                console.log(chara)
+            }
+
+
+            //search for a line with a string of characters, and then a colon after. This starts initMode, which allows STILTON to parse following lines as properties.
+            if(rows[i].match(/(\w+)\:{2}/) && !initMode) 
+            {
+                console.log(`starting initMode...`)
+                initMode = true
+                var chara = new Character()
+                chara.id = rows[i].match(/(\w+)\:{2}/)[1]
+                console.log(chara)
+            }
+
+
+            
+        }
+
+    })
+
+
     
 console.log(`initing charas...`)
 var det = new Character(`Antonia`,`det`,`#005500`)
 
 
 //perform the next action.
-let step = () => {
+//this is the core parser head for STILTON, and it's called everytime the container div is clicked.
+let step = async () => {
     console.log(`steppin.`)
-    moveI()
+
+    //moveI()
 }
 
 

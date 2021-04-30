@@ -8,6 +8,3 @@ class chara {
 
 }
 
-var det = new chara(`Antonia`,`det`,`005500`)
-
-console.log(det)

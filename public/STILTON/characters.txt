@@ -1,0 +1,20 @@
+#This is where you'll define all of your characters!
+#All lines that have a hash (#) at the beginning are ignored by STILTON.
+#To define a character, follow the format below, or even just copy it and put in whatever values you want.
+#The format is as follows:
+
+#(1) First, think of a "character ID". You'll use it to make them say things when you write STILTON script, so make it concise, but memorable. Denote a character ID for your character here, and follow the ID with double colons (::).
+#(2) Then, add properties to your new chracter. Do so by following the format "[property]: [value]", each on a new line, after an indent. See below.
+#(3) Lastly, tell STILTON you're done specifying your character by adding double colons (::) after your properties, on a new line.
+
+#Example for a character with ID det (short for "detective")
+
+det::
+	name: Antonia Villafuerte
+	color: #005500
+	defaultImage: det.png
+::
+
+#indentation/spacing is optional, STILTON does not care about this.
+#Currently, the only required property is name. All others values are either optional or will be assigned default values, if not specified.
+
