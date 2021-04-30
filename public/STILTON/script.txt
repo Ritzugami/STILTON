@@ -1,4 +1,12 @@
+#Welcome to the STILTON script! This is where the magic happens.
+#All lines prefixed with a hash (#) are ignored (i.e. commented).
+#This is where you'll control the flow of your game.
+#The most important things to remember:
+#Lines prefixed with a dollar sign ($) are commands.
+
+det:
 There once was a snake who did not care.
 He's up in a cloud, how did he get there?
+otk:
 I have no idea! I haven't a clue!
 It seems like it happened right out of the blue!

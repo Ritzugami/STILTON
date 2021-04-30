@@ -15,6 +15,13 @@ det::
 	defaultImage: det.png
 ::
 
+
+
 #indentation/spacing is optional, STILTON does not care about this.
 #Currently, the only required property is name. All others values are either optional or will be assigned default values, if not specified.
 
+otk::
+	name: Hiradaira Takagi
+	color: #550055
+	defaultImage: otk.png
+::
