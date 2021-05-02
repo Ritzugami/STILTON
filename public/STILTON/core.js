@@ -19,8 +19,9 @@ var line = 0
 //what character is STILTON currently focused on.
 var targetCharacter;
 //rollout text speed, in milliseconds.
-var rollout = 100;
-
+var rollout = 20;
+//controller for text rollout: lockout clicking until text rollout complete.
+var isRollouting = false;
 //sound controllers
 
 
@@ -109,6 +110,9 @@ fetch(`./STILTON/characters.txt`)
 //perform the next action.
 //this is the core parser head for STILTON, and it's called everytime the container div is clicked.
 let step = async () => {
+   
+    //do nothing if text is currently being rolled out.
+    if(isRollouting) return
     //start sayMode if the command is called.
     if(script[line].match(/\w+\:/))
     {
@@ -126,6 +130,7 @@ let step = async () => {
         //rollout text.
         if(rollout!==0)
         {
+            isRollouting = true;
             for(var i = 0; i < script[line].length;i++)
             {
                 currStr +=script[line][i]
@@ -134,9 +139,12 @@ let step = async () => {
                         res()
                     },rollout)
                 })
+               
                 tb.innerHTML=currStr
 
             }
+            //finish rollouting.
+            isRollouting = false;
         } else 
         {
             tb.innerHTML=script[line]
