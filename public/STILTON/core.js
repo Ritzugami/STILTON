@@ -16,8 +16,10 @@ class Character {
 var sayMode = false;
 //what line is STILTON about to read.
 var line = 0
-//what character is STILTON currently focused on.
+//what character ID is STILTON currently focused on.
 var targetCharacter;
+//the character object STILTON is currently focused on.
+var currentCharacter
 //rollout text speed, in milliseconds.
 var rollout = 20;
 //controller for text rollout: lockout clicking until text rollout complete.
@@ -119,6 +121,11 @@ let step = async () => {
         sayMode = true;
         targetCharacter = script[line].match(/(\w+)\:/)[1]
         console.log(`sayMode called for ${targetCharacter}`)
+        await setCurrentCharacter(targetCharacter)
+        //adjust the namebox.
+        nb.innerHTML = currentCharacter.name
+        console.log(currentCharacter.color)
+        nb.style.color = currentCharacter.color
         line++
     }
 
@@ -157,7 +164,7 @@ let step = async () => {
 }
 
 
-
+//init visual assets.
 let init = () => {
 
     console.log(`initializing STILTON...`)
@@ -180,8 +187,25 @@ let init = () => {
     tb.style.height = `200px`
     tb.style.top = `69%`
     tb.style.left = `1%`
-    //tb.style.opacity = `30%`
     tb.style.position = `absolute`
+    //add the namebox child.
+    var nb = document.createElement(`div`)
+    nb.id = `nb`
+    s.appendChild(nb)
+    nb.style.borderStyle = `solid`
+    nb.style.borderColor = `#FF0000`
+    nb.style.backgroundColor = `#555555`
+    nb.style.width = `200px`
+    nb.style.height = `30px`
+    nb.style.top = `64%`
+    nb.style.left = `1%`
+    nb.style.position = `absolute`
+    nb.style.display = `flex`
+    nb.style.alignItems = `center`
+    nb.style.justifyContent = `center`
+    //add textholder for namebox (nameboxtext, nbt)
+    
+    
     console.log(`...init done.`)
     //init characters.
 
@@ -227,3 +251,18 @@ setTimeout(() => {
 },100)
 
 
+//sets the current character based on ID
+let setCurrentCharacter = async (ID) => {
+    await new Promise((res,rej) => {
+        for(var i = 0; i<characterList.length;i++)
+        {
+            if(ID === characterList[i].id)
+            {
+                console.log(`current chara set to ${ID}`)
+                currentCharacter = characterList[i]
+            }
+        }
+        res()
+    })
+
+}

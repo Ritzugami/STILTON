@@ -2,7 +2,10 @@
 #All lines prefixed with a hash (#) are ignored (i.e. commented).
 #This is where you'll control the flow of your game.
 #The most important things to remember:
+
 #Lines prefixed with a dollar sign ($) are commands.
+#a line with a character ID, then a colon, note "say" blocks, which is how characters say things.
+
 
 det:
 There once was a snake who did not care.
