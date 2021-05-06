@@ -1,3 +1,4 @@
+
 console.log(`loading STILTON...`)
 //init STILTON vars.
 const w = `1000px`
@@ -112,51 +113,91 @@ fetch(`./STILTON/characters.txt`)
 //perform the next action.
 //this is the core parser head for STILTON, and it's called everytime the container div is clicked.
 let step = async () => {
-   
-    //do nothing if text is currently being rolled out.
-    if(isRollouting) return
-    //start sayMode if the command is called.
-    if(script[line].match(/\w+\:/))
-    {
-        sayMode = true;
-        targetCharacter = script[line].match(/(\w+)\:/)[1]
-        console.log(`sayMode called for ${targetCharacter}`)
-        await setCurrentCharacter(targetCharacter)
-        //adjust the namebox.
-        nb.innerHTML = currentCharacter.name
-        console.log(currentCharacter.color)
-        nb.style.color = currentCharacter.color
-        line++
-    }
+    var content = script[line]
 
-    if(sayMode)
+    //keep moving through step() without waiting for user input until sayMode or pause is called.
+    while(content.match(/^(\$)/))
     {
-        console.log(`${targetCharacter}: ${script[line]}`)
-        var tb = document.getElementById(`tb`)
-        var currStr = ``
-        //rollout text.
-        if(rollout!==0)
+        
+        console.log(`command called at line ${line}: ${content}`)
+            //if the script calls an $image command...
+        if(content.match(/\$image/))
         {
-            isRollouting = true;
-            for(var i = 0; i < script[line].length;i++)
+            console.log(`image command called.`)
+
+            if(content.match(/\$image\sdraw/))
             {
-                currStr +=script[line][i]
-                await new Promise((res,rej) => {
-                    setTimeout(() => {
-                        res()
-                    },rollout)
-                })
-               
-                tb.innerHTML=currStr
-
+                var path = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[1]
+                var id = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[2]
+                console.log(`path is ${path}, id ${id}`)
+                drawImage(path,id)
             }
-            //finish rollouting.
-            isRollouting = false;
-        } else 
+            if(content.match(/\$image\smove/))
+            {
+                var args = content.match(/\$image\smove\s(\w+)\s(\d+)\s(\d+)\s(\d+)/)
+                var [raw,id,x,y,t] = args
+                moveImage(id,x,y,t)
+            }
+
+
+
+        }
+
+
+        line++
+        var content = script[line]
+    }
+    //placeholder
+    if(true)
+    {
+         //do nothing if text is currently being rolled out.
+        if(isRollouting) return
+        //start sayMode if the command is called.
+        if(script[line].match(/\w+\:/))
         {
-            tb.innerHTML=script[line]
+            sayMode = true;
+            targetCharacter = script[line].match(/(\w+)\:/)[1]
+            console.log(`sayMode called for ${targetCharacter}`)
+            await setCurrentCharacter(targetCharacter)
+            //adjust the namebox.
+            nb.innerHTML = currentCharacter.name
+            console.log(currentCharacter.color)
+            nb.style.color = currentCharacter.color
+            line++
+        }
+        if(sayMode)
+        {
+            console.log(`${targetCharacter}: ${script[line]}`)
+            var tb = document.getElementById(`tb`)
+            var currStr = ``
+            //rollout text.
+            if(rollout!==0)
+            {
+                isRollouting = true;
+                for(var i = 0; i < script[line].length;i++)
+                {
+                    currStr +=script[line][i]
+                    await new Promise((res,rej) => {
+                        setTimeout(() => {
+                            res()
+                        },rollout)
+                    })
+                   
+                    tb.innerHTML=currStr
+    
+                }
+                //finish rollouting.
+                isRollouting = false;
+            } else 
+            {
+                tb.innerHTML=script[line]
+            }
         }
     }
+   
+   
+
+
 
     line++;
 
@@ -182,19 +223,20 @@ let init = () => {
     s.appendChild(tb)
     tb.style.borderStyle = `solid`
     tb.style.borderColor = `#FF0000`
-    tb.style.backgroundColor = `#555555`
+    tb.style.backgroundColor = `#CCCCCC`
     tb.style.width = `973px`
     tb.style.height = `200px`
     tb.style.top = `69%`
     tb.style.left = `1%`
     tb.style.position = `absolute`
+    tb.style.zIndex = `100`
     //add the namebox child.
     var nb = document.createElement(`div`)
     nb.id = `nb`
     s.appendChild(nb)
     nb.style.borderStyle = `solid`
     nb.style.borderColor = `#FF0000`
-    nb.style.backgroundColor = `#555555`
+    nb.style.backgroundColor = `#CCCCCC`
     nb.style.width = `200px`
     nb.style.height = `30px`
     nb.style.top = `64%`
@@ -203,6 +245,7 @@ let init = () => {
     nb.style.display = `flex`
     nb.style.alignItems = `center`
     nb.style.justifyContent = `center`
+    nb.style.zIndex = `101`
     //add textholder for namebox (nameboxtext, nbt)
     
     
@@ -219,31 +262,43 @@ let dispCharacters = () => {
 }
 
 
-let drawI = (c) => {
+
+
+let drawImage = (path,id) => {
     var s = document.getElementById("STILTON")
     var i = document.createElement(`img`)
-    console.log(`drawing engie`)
-    i.src = `./STILTON/img/engie.gif`
-    i.style.width = `100px`
-    i.id = `eng`
+    i.src = `./STILTON/img/${path}`
+    //i.style.width = `100px`
+    i.id = `${id}`
     i.style.position = `absolute`
-    i.style.top = `111px`
-    i.style.left = `111px`
-    
+    i.style.transitionProperty = `opacity`
+    i.style.transitionDuration = `.5s`
+    i.style.top = `0px`
+    i.style.left = `0px`
+    i.style.opacity = `0%`
     s.appendChild(i)
+    //callback after image instantiation.
+    requestAnimationFrame(() => {
+        i.style.opacity = `100%`
+    })
 }
 
-let moveI = () => {
-    console.log(`moving engie...`)
-    var i = document.getElementById("eng")
-    i.style.transition = `.2s`
-    var pos = i.style.left
-    console.log(pos)
-    var x = Math.floor(Math.random()*1000)
-    var y = Math.floor(Math.random()*700)
 
+
+
+
+
+let moveImage = (id,x,y,t) => {
+    var i = document.getElementById(id)
+    i.style.transition = `${t}s`
     i.style.left = `${x}px`
     i.style.top = `${y}px`
+
+    
+
+   
+
+    
 }
 setTimeout(() => {
     //init stilton.

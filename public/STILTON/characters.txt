@@ -25,3 +25,8 @@ otk::
 	color: #550055
 	defaultImage: otk.png
 ::
+nar::
+	name: Narrator
+	color: #000000
+	defaultImage: otk.png
+::
