@@ -3,7 +3,7 @@
 #This is where you'll control the flow of your game.
 #The most important things to remember:
 
-#Lines prefixed with a dollar sign ($) are commands.
+#Lines prefixed with a dollar sign ($) are commands. They are executed instantly when called, and afterwards STILTON will read the following line without waiting for user input. 
 #a line with a character ID, then a colon, note "say" blocks, which is how characters say things.
 
 
@@ -27,3 +27,4 @@ otk:
 oh dood look at it go
 nar:
 and then, everyone died. the end. :)
+

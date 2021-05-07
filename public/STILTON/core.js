@@ -22,7 +22,7 @@ var targetCharacter;
 //the character object STILTON is currently focused on.
 var currentCharacter
 //rollout text speed, in milliseconds.
-var rollout = 20;
+var rollout = 10;
 //controller for text rollout: lockout clicking until text rollout complete.
 var isRollouting = false;
 //sound controllers
@@ -304,6 +304,20 @@ setTimeout(() => {
     //init stilton.
     init()
 },100)
+
+let log = () => {
+    console.log(`hey hey hey!`)
+}
+
+//handle different types of input from the keyboard.
+let keyInputHandler = () => {
+    step()
+}
+
+//on a key press, cause step to happen.
+document.body.onkeydown = keyInputHandler
+
+
 
 
 //sets the current character based on ID
