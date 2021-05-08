@@ -10,8 +10,8 @@
 det:
 There once was a snake who did not care.
 He's up in a cloud, how did he get there?
-$image draw engie.gif eng
-$image draw toiler.jpg tlt
+$image draw engie.gif eng {left: 300}
+$image draw toiler.jpg tlt {left: 200, top: 200}
 otk:
 I have no idea! I haven't a clue!
 $image move tlt 500 500 10

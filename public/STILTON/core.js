@@ -123,14 +123,19 @@ let step = async () => {
             //if the script calls an $image command...
         if(content.match(/\$image/))
         {
+            var oa = {};
             console.log(`image command called.`)
 
             if(content.match(/\$image\sdraw/))
             {
                 var path = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[1]
                 var id = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[2]
+                //detect optionalArgs
+                oa = await detectOptionalArgs(content)
+
                 console.log(`path is ${path}, id ${id}`)
-                drawImage(path,id)
+                drawImage(path,id,oa)
+                
             }
             if(content.match(/\$image\smove/))
             {
@@ -264,7 +269,8 @@ let dispCharacters = () => {
 
 
 
-let drawImage = (path,id) => {
+let drawImage = (path,id,oa) => {
+    console.log(oa)
     var s = document.getElementById("STILTON")
     var i = document.createElement(`img`)
     i.src = `./STILTON/img/${path}`
@@ -280,6 +286,11 @@ let drawImage = (path,id) => {
     //callback after image instantiation.
     requestAnimationFrame(() => {
         i.style.opacity = `100%`
+        if(oa) 
+            {
+                if(oa.left)i.style.left = `${oa.left}px`
+                if(oa.top)i.style.top = `${oa.top}px`
+            }
     })
 }
 
@@ -305,10 +316,18 @@ setTimeout(() => {
     init()
 },100)
 
-let log = () => {
-    console.log(`hey hey hey!`)
-}
+let detectOptionalArgs = async (content) => {
+    if(content.match(/\{.*\}$/))
+    {
+        //This relaxed JSON regex was contributed to stackexchange by Arnaud Weil. Thanks, Arnaud Weil!
+        //https://stackoverflow.com/questions/9637517/parsing-relaxed-json-without-eval
+        var correctedOptArgs = content.match(/(\{.*\})$/)[1].replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ')
+        var optArgs = JSON.parse(correctedOptArgs)
+        console.log(`optArgs: ${optArgs}`)
+        return optArgs
+    } else return null;
 
+}
 //handle different types of input from the keyboard.
 let keyInputHandler = () => {
     step()
