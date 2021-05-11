@@ -21,8 +21,9 @@ holy fuck is that a toilet?
 $image move tlt 100 100 1
 det:
 oh christ i think it is
-how is it moving around
-$image move tlt 400 400 4
+$image delete tlt
+det:
+bye bye
 otk:
 oh dood look at it go
 nar:

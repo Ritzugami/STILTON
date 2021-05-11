@@ -25,7 +25,8 @@ var currentCharacter
 var rollout = 10;
 //controller for text rollout: lockout clicking until text rollout complete.
 var isRollouting = false;
-//sound controllers
+
+
 
 
 //load the script into memory.
@@ -115,38 +116,14 @@ fetch(`./STILTON/characters.txt`)
 let step = async () => {
     var content = script[line]
 
-    //keep moving through step() without waiting for user input until sayMode or pause is called.
+    //keep moving through step without waiting for user input until sayMode or pause is called.
     while(content.match(/^(\$)/))
     {
         
         console.log(`command called at line ${line}: ${content}`)
             //if the script calls an $image command...
-        if(content.match(/\$image/))
-        {
-            var oa = {};
-            console.log(`image command called.`)
-
-            if(content.match(/\$image\sdraw/))
-            {
-                var path = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[1]
-                var id = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[2]
-                //detect optionalArgs
-                oa = await detectOptionalArgs(content)
-
-                console.log(`path is ${path}, id ${id}`)
-                drawImage(path,id,oa)
-                
-            }
-            if(content.match(/\$image\smove/))
-            {
-                var args = content.match(/\$image\smove\s(\w+)\s(\d+)\s(\d+)\s(\d+)/)
-                var [raw,id,x,y,t] = args
-                moveImage(id,x,y,t)
-            }
-
-
-
-        }
+        if(content.match(/\$image/)) await imageFunc(content)
+        
 
 
         line++
@@ -252,8 +229,17 @@ let init = () => {
     nb.style.justifyContent = `center`
     nb.style.zIndex = `101`
     //add textholder for namebox (nameboxtext, nbt)
-    
-    
+    //todo lol
+
+    //create 10 audio channels.
+    for(var i = 0;i<10;i++)
+    {
+        var aChan = document.createElement(`audio`)
+        aChan.src = ``
+        aChan.id = `a${i}`
+        aChan.hidden = true
+        s.appendChild(aChan)
+    }
     console.log(`...init done.`)
     //init characters.
 
@@ -304,13 +290,15 @@ let moveImage = (id,x,y,t) => {
     i.style.transition = `${t}s`
     i.style.left = `${x}px`
     i.style.top = `${y}px`
-
-    
-
-   
-
-    
 }
+
+//deletes an image element.
+let deleteImage = (id) => {
+    var i = document.getElementById(id)
+    i.remove()
+
+}
+
 setTimeout(() => {
     //init stilton.
     init()
@@ -336,7 +324,55 @@ let keyInputHandler = () => {
 //on a key press, cause step to happen.
 document.body.onkeydown = keyInputHandler
 
+let imageFunc = async (content) => {
+        
+        var oa = {};
+        console.log(`image command called.`)
 
+        if(content.match(/\$image\sdraw/))
+        {
+            var path = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[1]
+            var id = content.match(/\$image\sdraw\s([A-Za-z.]+)\s(\w+)/)[2]
+            //detect optionalArgs
+            oa = await detectOptionalArgs(content)
+
+            console.log(`path is ${path}, id ${id}`)
+            drawImage(path,id,oa)
+            
+        }
+        if(content.match(/\$image\smove/))
+        {
+            var args = content.match(/\$image\smove\s(\w+)\s(\d+)\s(\d+)\s(\d+)/)
+            var [raw,id,x,y,t] = args
+            moveImage(id,x,y,t)
+        }
+        if(content.match(/\$image\sdelete/))
+        {
+            var args = content.match(/\$image\sdelete\s(\w+)/)
+            console.log(args)
+            var [raw,id] = args
+            console.log(`delete id is ${id}`)
+            deleteImage(id)
+        }
+
+
+
+
+
+
+    
+
+}
+
+let audioFunc = async (content) => {
+
+    
+}
+
+//plays a clip of audio.
+let playAudio = async (src,id) => {
+
+}
 
 
 //sets the current character based on ID
