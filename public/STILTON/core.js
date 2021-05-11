@@ -1,8 +1,8 @@
 
 console.log(`loading STILTON...`)
 //init STILTON vars.
-const w = `1000px`
-const h = `700px`
+const w = `1900px`
+const h = `900px`
 //the core script.
 var script = [];
 var characterList = [];
@@ -123,7 +123,7 @@ let step = async () => {
         console.log(`command called at line ${line}: ${content}`)
             //if the script calls an $image command...
         if(content.match(/\$image/)) await imageFunc(content)
-        
+        if(content.match(/\$audio/)) await audioFunc(content)
 
 
         line++
@@ -365,13 +365,24 @@ let imageFunc = async (content) => {
 }
 
 let audioFunc = async (content) => {
+    var oa = {};
+    console.log(`audio command called.`)
 
-    
+    if(content.match(/\$audio\splay/))
+    {
+        console.log(content.match(/\$audio\splay\s([A-Za-z0-9.]+)\s([A-Za-z.0-9]+)/))
+        var id = content.match(/\$audio\splay\s([A-Za-z0-9.]+)\s([A-Za-z.0-9]+)/)[1]
+        var src = content.match(/\$audio\splay\s([A-Za-z0-9.]+)\s([A-Za-z.0-9]+)/)[2]
+        await playAudio(id,src)
+    }
 }
 
 //plays a clip of audio.
-let playAudio = async (src,id) => {
-
+let playAudio = async (id,src) => {
+    var ac = document.getElementById(id)
+    ac.src = `./STILTON/audio/${src}`
+    ac.load()
+    ac.play()
 }
 
 
